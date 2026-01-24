@@ -12,9 +12,7 @@ import { FileHandler } from '@/lib/file-handler';
 export default function Home() {
   const {
     data,
-    darkMode,
     setData,
-    setDarkMode,
     saveToLocalStorage,
     loadFromLocalStorage,
     calculateStats,
@@ -24,9 +22,6 @@ export default function Home() {
 
   useEffect(() => {
     loadFromLocalStorage();
-    if (darkMode) {
-      document.documentElement.classList.add('dark');
-    }
   }, []);
 
   const handleHotTableReady = useCallback((hotTable: any) => {
@@ -112,7 +107,7 @@ export default function Home() {
   const stats = calculateStats();
 
   return (
-    <div className={darkMode ? 'dark' : ''}>
+    <div>
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
         <Header />
         <Toolbar
