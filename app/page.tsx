@@ -7,8 +7,8 @@ import { Spreadsheet } from '@/components/spreadsheet';
 import { Stats } from '@/components/stats';
 import { SettingsModal } from '@/components/settings-modal';
 import { useSpreadsheetStore } from '@/store/spreadsheet-store';
-import { FileHandler } from '@/lib/file-handler';
 import { useSpreadsheetActions } from '@/hooks/useSpreadsheetActions';
+import { useSpreadsheetFiles } from '@/hooks/useSpreadsheetFiles';
 
 export default function Home() {
   const {
@@ -21,6 +21,12 @@ export default function Home() {
   } = useSpreadsheetStore();
 
   const hotTableRef = useRef<any>(null);
+
+  const file = useSpreadsheetFiles(
+    hotTableRef,
+    fileName,
+    setData
+  );
 
   useEffect(() => {
     loadFromLocalStorage();
@@ -40,40 +46,6 @@ export default function Home() {
     alert('Dados salvos com sucesso!');
   };
 
-  const handleExportExcel = async () => {
-    if (!hotTableRef.current?.hotInstance) return;
-    const currentData = hotTableRef.current.hotInstance.getData();
-    await FileHandler.exportToExcel(currentData, fileName);
-  };
-
-  const handleExportCSV = async () => {
-    if (!hotTableRef.current?.hotInstance) return;
-    const currentData = hotTableRef.current.hotInstance.getData();
-    await FileHandler.exportToCSV(currentData, fileName);
-  };
-
-  const handleImport = async (file: File) => {
-    try {
-      let importedData: any[][];
-
-      if (file.name.endsWith('.csv')) {
-        importedData = await FileHandler.importCSV(file);
-      } else if (file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
-        importedData = await FileHandler.importExcel(file);
-      } else {
-        alert('Formato de arquivo não suportado');
-        return;
-      }
-
-      setData(importedData);
-      hotTableRef.current?.hotInstance?.loadData(importedData);
-      alert('Arquivo importado com sucesso!');
-    } catch (error) {
-      console.error('Erro ao importar:', error);
-      alert('Erro ao importar arquivo');
-    }
-  };
-
   const stats = calculateStats();
 
   return (
@@ -86,9 +58,9 @@ export default function Home() {
           onRemoveRow={actions.removeRow}
           onRemoveColumn={actions.removeColumn}
           onSave={handleSave}
-          onExportExcel={handleExportExcel}
-          onExportCSV={handleExportCSV}
-          onImport={handleImport}
+          onExportCSV={file.exportCSV}
+          onExportExcel={file.exportExcel}
+          onImport={file.importFile}
         />
 
         <main className="px-6 py-6">
