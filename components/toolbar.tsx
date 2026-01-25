@@ -4,6 +4,7 @@ import { Plus, Trash2, Save, Download, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useRef } from 'react';
+import { ButtonGroup } from '@/components/ui/button-group';
 
 interface ToolbarProps {
   onAddRow: () => void;
@@ -43,50 +44,45 @@ export function Toolbar({
   return (
     <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-3">
       <div className="flex items-center gap-2 flex-wrap">
-        {/* Adicionar */}
-        <div className="flex items-center gap-1 border-r pr-2 mr-2">
-          <Button onClick={onAddRow} size="sm">
+        <ButtonGroup>
+          <Button onClick={onAddRow} variant="outline">
             <Plus className="w-4 h-4 mr-2" />
             Linha
           </Button>
-          <Button onClick={onAddColumn} size="sm">
+          <Button onClick={onAddColumn} variant="outline">
             <Plus className="w-4 h-4 mr-2" />
             Coluna
           </Button>
-        </div>
+        </ButtonGroup>
 
-        {/* Remover */}
-        <div className="flex items-center gap-1 border-r pr-2 mr-2">
-          <Button onClick={onRemoveRow} variant="destructive" size="sm">
+        <ButtonGroup>
+          <Button onClick={onRemoveRow} variant="destructive">
             <Trash2 className="w-4 h-4 mr-2" />
             Linha
           </Button>
-          <Button onClick={onRemoveColumn} variant="destructive" size="sm">
+          <Button onClick={onRemoveColumn} variant="destructive">
             <Trash2 className="w-4 h-4 mr-2" />
             Coluna
           </Button>
-        </div>
+        </ButtonGroup>
 
-        {/* Salvar */}
-        <Button onClick={onSave} variant="outline" size="sm">
+        <Button onClick={onSave} variant="outline">
           <Save className="w-4 h-4 mr-2" />
           Salvar
         </Button>
 
-        {/* Exportar */}
-        <div className="flex items-center gap-1 border-l pl-2 ml-2">
-          <Button onClick={onExportExcel} variant="secondary" size="sm">
+        <ButtonGroup>
+          <Button onClick={onExportExcel} variant="secondary">
             <Download className="w-4 h-4 mr-2" />
             Excel
           </Button>
-          <Button onClick={onExportCSV} variant="secondary" size="sm">
+          <Button onClick={onExportCSV} variant="secondary">
             <Download className="w-4 h-4 mr-2" />
             CSV
           </Button>
-        </div>
+        </ButtonGroup>
 
-        {/* Importar */}
-        <Button onClick={handleImportClick} size="sm" className="bg-purple-500 hover:bg-purple-600">
+        <Button onClick={handleImportClick} variant="link">
           <Upload className="w-4 h-4 mr-2" />
           Importar
         </Button>
