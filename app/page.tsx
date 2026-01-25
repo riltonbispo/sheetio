@@ -8,10 +8,12 @@ import { Stats } from '@/components/stats';
 import { SettingsModal } from '@/components/settings-modal';
 import { useSpreadsheetStore } from '@/store/spreadsheet-store';
 import { FileHandler } from '@/lib/file-handler';
+import { useSpreadsheetActions } from '@/hooks/useSpreadsheetActions';
 
 export default function Home() {
   const {
     data,
+    fileName,
     setData,
     saveToLocalStorage,
     loadFromLocalStorage,
@@ -22,45 +24,13 @@ export default function Home() {
 
   useEffect(() => {
     loadFromLocalStorage();
-  }, []);
+  }, [loadFromLocalStorage]);
 
   const handleHotTableReady = useCallback((hotTable: any) => {
     hotTableRef.current = hotTable;
   }, []);
 
-  const addRow = () => {
-    if (!hotTableRef.current?.hotInstance) return;
-    const rowCount = hotTableRef.current.hotInstance.countRows();
-    hotTableRef.current.hotInstance.alter('insert_row_below', rowCount - 1);
-  };
-
-  const addColumn = () => {
-    if (!hotTableRef.current?.hotInstance) return;
-    const colCount = hotTableRef.current.hotInstance.countCols();
-    hotTableRef.current.hotInstance.alter('insert_col_end', colCount);
-  };
-
-  const removeRow = () => {
-    if (!hotTableRef.current?.hotInstance) return;
-    const selected = hotTableRef.current.hotInstance.getSelected();
-    if (selected && selected.length > 0) {
-      const row = selected[0][0];
-      hotTableRef.current.hotInstance.alter('remove_row', row);
-    } else {
-      alert('Selecione uma linha para remover');
-    }
-  };
-
-  const removeColumn = () => {
-    if (!hotTableRef.current?.hotInstance) return;
-    const selected = hotTableRef.current.hotInstance.getSelected();
-    if (selected && selected.length > 0) {
-      const col = selected[0][1];
-      hotTableRef.current.hotInstance.alter('remove_col', col);
-    } else {
-      alert('Selecione uma coluna para remover');
-    }
-  };
+  const actions = useSpreadsheetActions(hotTableRef);
 
   const handleSave = () => {
     if (!hotTableRef.current?.hotInstance) return;
@@ -73,13 +43,13 @@ export default function Home() {
   const handleExportExcel = async () => {
     if (!hotTableRef.current?.hotInstance) return;
     const currentData = hotTableRef.current.hotInstance.getData();
-    await FileHandler.exportToExcel(currentData, useSpreadsheetStore.getState().fileName);
+    await FileHandler.exportToExcel(currentData, fileName);
   };
 
   const handleExportCSV = async () => {
     if (!hotTableRef.current?.hotInstance) return;
     const currentData = hotTableRef.current.hotInstance.getData();
-    await FileHandler.exportToCSV(currentData, useSpreadsheetStore.getState().fileName);
+    await FileHandler.exportToCSV(currentData, fileName);
   };
 
   const handleImport = async (file: File) => {
@@ -111,10 +81,10 @@ export default function Home() {
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
         <Header />
         <Toolbar
-          onAddRow={addRow}
-          onAddColumn={addColumn}
-          onRemoveRow={removeRow}
-          onRemoveColumn={removeColumn}
+          onAddRow={actions.addRow}
+          onAddColumn={actions.addColumn}
+          onRemoveRow={actions.removeRow}
+          onRemoveColumn={actions.removeColumn}
           onSave={handleSave}
           onExportExcel={handleExportExcel}
           onExportCSV={handleExportCSV}
