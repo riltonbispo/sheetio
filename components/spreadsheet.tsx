@@ -1,24 +1,25 @@
 'use client';
 
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, ReactNode } from 'react';
 import { HotTable } from '@handsontable/react';
 import { registerAllModules } from 'handsontable/registry';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import 'handsontable/dist/handsontable.full.min.css';
-import { Card, CardContent } from '@/components/ui/card';
+import { useSpreadsheetStore } from '@/store/spreadsheet-store';
 
 if (typeof window !== 'undefined') {
   registerAllModules();
 }
 
 interface SpreadsheetProps {
-  data: any[][];
-  stats: { rows: number; cols: number };
   onHotTableReady: (hotTable: any) => void;
+  header?: ReactNode;
 }
 
-export function Spreadsheet({ data, stats, onHotTableReady }: SpreadsheetProps) {
+export function Spreadsheet({header, onHotTableReady }: SpreadsheetProps) {
   const hotTableRef = useRef<any>(null);
   const [isClient, setIsClient] = useState(false);
+  const {data} = useSpreadsheetStore();
 
   useEffect(() => {
     setIsClient(true);
@@ -36,30 +37,8 @@ export function Spreadsheet({ data, stats, onHotTableReady }: SpreadsheetProps) 
 
   return (
     <Card>
-      <div className="px-4 py-3 border-b bg-gray-50 dark:bg-gray-800">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4 text-sm">
-            <span className="text-gray-600 dark:text-gray-400">
-              <strong className="text-gray-900 dark:text-gray-200">
-                {stats.rows}
-              </strong>{' '}
-              linhas ×{' '}
-              <strong className="text-gray-900 dark:text-gray-200">
-                {stats.cols}
-              </strong>{' '}
-              colunas
-            </span>
-            <span className="px-2 py-1 rounded text-xs font-medium bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-300">
-              Pronto para edição
-            </span>
-          </div>
-          <div className="text-sm text-gray-600 dark:text-gray-400">
-            SheetIO v2.0
-          </div>
-        </div>
-      </div>
-
-      <CardContent className="p-6">
+      <CardHeader>{header}</CardHeader>
+      <CardContent>
         <HotTable
           ref={hotTableRef}
           data={data}

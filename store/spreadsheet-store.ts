@@ -12,8 +12,6 @@ interface SpreadsheetState {
   
   saveToLocalStorage: () => void;
   loadFromLocalStorage: () => void;
-  
-  calculateStats: () => { totalCells: number; filledCells: number; rows: number; cols: number };
 }
 
 export const useSpreadsheetStore = create<SpreadsheetState>()(
@@ -53,18 +51,6 @@ export const useSpreadsheetStore = create<SpreadsheetState>()(
             set({ fileName: savedFileName });
           }
         }
-      },
-      
-      calculateStats: () => {
-        const { data } = get();
-        const rows = data.length;
-        const cols = data[0]?.length || 0;
-        const totalCells = rows * cols;
-        const filledCells = data.flat().filter(
-          (cell) => cell !== null && cell !== '' && cell !== undefined
-        ).length;
-        
-        return { totalCells, filledCells, rows, cols };
       },
     }),
     {
