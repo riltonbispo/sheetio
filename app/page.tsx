@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useCallback, useRef } from 'react';
+import { useCallback, useRef } from 'react';
 import { Header } from '@/components/header';
 import { Toolbar } from '@/components/toolbar';
 import { Spreadsheet } from '@/components/spreadsheet';
@@ -12,8 +12,6 @@ export default function Home() {
   const {
     fileName,
     setData,
-    saveToLocalStorage,
-    loadFromLocalStorage,
   } = useSpreadsheetStore();
 
   const hotTableRef = useRef<any>(null);
@@ -23,10 +21,6 @@ export default function Home() {
     fileName,
     setData
   );
-
-  useEffect(() => {
-    loadFromLocalStorage();
-  }, [loadFromLocalStorage]);
 
   const handleHotTableReady = useCallback((hotTable: any) => {
     hotTableRef.current = hotTable;
@@ -38,7 +32,6 @@ export default function Home() {
     if (!hotTableRef.current?.hotInstance) return;
     const currentData = hotTableRef.current.hotInstance.getData();
     setData(currentData);
-    saveToLocalStorage();
     alert('Dados salvos com sucesso!');
   };
 
