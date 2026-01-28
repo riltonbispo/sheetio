@@ -8,15 +8,11 @@ interface SpreadsheetState {
   
   setData: (data: any[][]) => void;
   setFileName: (name: string) => void;
-  setShowSettings: (show: boolean) => void;
-  
-  saveToLocalStorage: () => void;
-  loadFromLocalStorage: () => void;
 }
 
 export const useSpreadsheetStore = create<SpreadsheetState>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       data: [
         ['', 'Tesla', 'Volvo', 'Toyota', 'Ford'],
         ['2019', 10, 11, 12, 13],
@@ -27,38 +23,10 @@ export const useSpreadsheetStore = create<SpreadsheetState>()(
       showSettings: false,
 
       setData: (data) => set({ data }),
-      setFileName: (fileName) => set({ fileName }),
-
-      setShowSettings: (showSettings) => set({ showSettings }),
-      
-      saveToLocalStorage: () => {
-        const { data, fileName } = get();
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('sheetio_data', JSON.stringify(data));
-          localStorage.setItem('sheetio_filename', fileName);
-        }
-      },
-      
-      loadFromLocalStorage: () => {
-        if (typeof window !== 'undefined') {
-          const savedData = localStorage.getItem('sheetio_data');
-          const savedFileName = localStorage.getItem('sheetio_filename');
-          
-          if (savedData) {
-            set({ data: JSON.parse(savedData) });
-          }
-          if (savedFileName) {
-            set({ fileName: savedFileName });
-          }
-        }
-      },
+      setFileName: (fileName) => set({ fileName })
     }),
     {
       name: 'sheetio-storage',
-      partialize: (state) => ({
-        data: state.data,
-        fileName: state.fileName,
-      }),
     }
   )
 );
