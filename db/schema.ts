@@ -73,9 +73,27 @@ export const verification = pgTable(
   (table) => [index("verification_identifier_idx").on(table.identifier)],
 );
 
+export const spreadsheet = pgTable(
+  "spreadsheet",
+  {
+    id: text("id").primaryKey(),
+    fileName: text("file_name").notNull(),
+    filePath: text("file_path").notNull(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => [
+    index("spreadsheet_userId_idx").on(table.userId),
+  ]
+);
+
 export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),
   accounts: many(account),
+  spreadsheets: many(spreadsheet)
 }));
 
 export const sessionRelations = relations(session, ({ one }) => ({
@@ -88,6 +106,13 @@ export const sessionRelations = relations(session, ({ one }) => ({
 export const accountRelations = relations(account, ({ one }) => ({
   user: one(user, {
     fields: [account.userId],
+    references: [user.id],
+  }),
+}));
+
+export const spreadsheetRelations = relations(spreadsheet, ({ one }) => ({
+  user: one(user, {
+    fields: [spreadsheet.userId],
     references: [user.id],
   }),
 }));
